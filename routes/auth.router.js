@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const {register, login, logout, authenticateToken, refreshTokens} = require('./../controllers/auth.controller');
+const {register, login, logout, refreshTokens} = require('./../controllers/auth.controller');
+const { authenticateToken } = require('./../auth/auth');
 const passport = require('passport');
 
 const { validate, credentialsValidations } = require('./../validators/validate');
 
 router.post('/register', validate(credentialsValidations), async (req, res) => {
     try {
-        await register(req);
-        return res.status(200).send({message: "User registered successfully"});
+        const newUser = await register(req.body);
+        return res.status(201).json(newUser);
     } catch {
         return res.status(500).send({message: "Error registering user"});
     }
